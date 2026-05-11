@@ -64,7 +64,7 @@ describe('Integration: marketplace → install pipeline', () => {
   });
 
   test('installPlugin clones and installs a plugin', async () => {
-    const entry = { name: uniquePluginName, source: { source: 'git' as const, url: testPluginDir, ref: 'main' } };
+    const entry = { name: uniquePluginName, source: { source: 'git' as const, url: `file://${testPluginDir}`, ref: 'main' } };
     const installed = await installPlugin(entry, uniqueMarketplaceName);
     expect(installed.id).toBe(`${uniquePluginName}@${uniqueMarketplaceName}`);
     expect(installed.name).toBe(uniquePluginName);
@@ -79,7 +79,7 @@ describe('Integration: marketplace → install pipeline', () => {
       owner: { name: 'Test' },
       plugins: [{
         name: uniquePluginName,
-        source: { source: 'git' as const, url: testPluginDir, ref: 'main' },
+        source: { source: 'git' as const, url: `file://${testPluginDir}`, ref: 'main' },
         description: 'A test plugin',
         tags: ['test']
       }]
@@ -91,7 +91,7 @@ describe('Integration: marketplace → install pipeline', () => {
     // Add marketplace
     const manager = new MarketplaceManager();
     await manager.init();
-    const mp = await manager.addMarketplace({ source: 'git', url: testMarketplaceDir, ref: 'main' }, uniqueMarketplaceName);
+    const mp = await manager.addMarketplace({ source: 'git', url: `file://${testMarketplaceDir}`, ref: 'main' }, uniqueMarketplaceName);
     expect(mp.plugins.length).toBe(1);
 
     const results = await manager.searchPlugins(uniquePluginName);

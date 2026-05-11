@@ -9,14 +9,6 @@ import type { PluginManifest } from '../schemas/plugin.js';
 // Re-export inferred types from Zod schemas
 export type { Marketplace, PluginMarketplaceEntry, PluginSource, PluginAuthor, PluginManifest };
 
-// Runtime configuration for a registered marketplace
-export interface MarketplaceConfig {
-  name: string;
-  source: PluginSource;
-  cachePath: string;
-  lastUpdated: Date;
-}
-
 // An installed plugin from a marketplace
 export interface InstalledPlugin {
   id: string;          // '{name}@{marketplace}'

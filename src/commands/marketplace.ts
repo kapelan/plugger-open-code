@@ -1,7 +1,5 @@
-import { MarketplaceManager } from '../marketplace/manager.js';
+import { sharedMarketplaceManager as manager } from '../marketplace/manager.js';
 import type { PluginSource } from '../schemas/marketplace.js';
-
-const manager = new MarketplaceManager();
 
 export interface CommandResult {
   success: boolean;

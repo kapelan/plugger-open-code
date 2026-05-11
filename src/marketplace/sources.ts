@@ -1,21 +1,5 @@
-import { z } from 'zod';
+import { PluginSourceSchema } from '../schemas/marketplace.js';
 import type { PluginSource } from '../types/index.js';
-
-// Validation schema for source input
-const SourceInputSchema = z.discriminatedUnion('source', [
-  z.object({
-    source: z.literal('github'),
-    repo: z.string().min(1, 'repo is required for github source'),
-    ref: z.string().optional(),
-    path: z.string().optional(),
-  }),
-  z.object({
-    source: z.literal('git'),
-    url: z.string().min(1, 'url is required for git source'),
-    ref: z.string().optional(),
-    path: z.string().optional(),
-  }),
-]);
 
 export interface ResolvedSource {
   gitUrl: string;
@@ -28,8 +12,7 @@ export interface ResolvedSource {
  * This is used by the marketplace manager to clone marketplace repositories.
  */
 export function resolveMarketplaceSource(source: PluginSource): ResolvedSource {
-  // Validate input
-  SourceInputSchema.parse(source);
+  PluginSourceSchema.parse(source);
 
   let gitUrl: string;
   const ref = source.ref || 'HEAD';

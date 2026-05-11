@@ -1,15 +1,19 @@
-import { mkdir, readFile, writeFile } from 'fs/promises';
+import { mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
-import type { PluginMarketplaceEntry } from '../schemas/marketplace.js';
+import { homedir } from 'os';
+import { IDENTIFIER_REGEX, type PluginMarketplaceEntry } from '../schemas/marketplace.js';
 import type { InstalledPlugin } from '../types/index.js';
 import { resolvePluginSource } from '../marketplace/sources.js';
 import { loadPlugin } from '../loader/plugin.js';
 
-const HOME = process.env.HOME || '~';
-const INSTALL_DIR = join(HOME, '.opencode', 'plugins');
+const INSTALL_DIR = join(homedir(), '.opencode', 'plugins');
 
 export async function installPlugin(entry: PluginMarketplaceEntry, marketplace: string): Promise<InstalledPlugin> {
+  if (!IDENTIFIER_REGEX.test(marketplace)) {
+    throw new Error(`Invalid marketplace name "${marketplace}": must match ${IDENTIFIER_REGEX}`);
+  }
+  // entry.name is validated by PluginMarketplaceEntrySchema upstream.
   await mkdir(INSTALL_DIR, { recursive: true });
 
   const pluginId = `${entry.name}@${marketplace}`;
@@ -20,7 +24,7 @@ export async function installPlugin(entry: PluginMarketplaceEntry, marketplace: 
     const { gitUrl, ref } = resolvePluginSource(entry.source);
     const { execa } = await import('execa');
     const branch = ref === 'HEAD' ? 'main' : ref;
-    await execa('git', ['clone', '--depth', '1', '--single-branch', '--branch', branch, gitUrl, installPath]);
+    await execa('git', ['clone', '--depth', '1', '--single-branch', '--branch', branch, '--', gitUrl, installPath]);
   }
 
   // Load plugin manifest directly (no translation)

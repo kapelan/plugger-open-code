@@ -28,9 +28,9 @@ export async function loadPlugin(pluginDir: string, options?: { id?: string; sou
 
 export function getPluginCapabilities(plugin: PluginLoadResult) {
   return {
-    hasCommands: !!plugin.manifest.commands,
+    hasCommands: !!plugin.manifest.commands && plugin.manifest.commands.length > 0,
     hasHooks: !!plugin.manifest.hooks && Object.keys(plugin.manifest.hooks).length > 0,
-    hasSkills: !!plugin.manifest.skills,
+    hasSkills: !!plugin.manifest.skills && plugin.manifest.skills.length > 0,
     hasMcpServers: !!plugin.manifest.mcpServers && Object.keys(plugin.manifest.mcpServers).length > 0,
   };
 }
