@@ -1,0 +1,29 @@
+{
+  "name": "example-plugin",
+  "version": "1.0.0",
+  "description": "An example Claude Code plugin",
+  "author": {
+    "name": "Test Author"
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo done"
+          }
+        ]
+      }
+    ]
+  },
+  "commands": ["./commands/"],
+  "skills": ["./skills/"],
+  "mcpServers": {
+    "test-server": {
+      "command": "echo",
+      "args": ["test"]
+    }
+  }
+}

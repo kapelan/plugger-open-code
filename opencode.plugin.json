@@ -1,0 +1,48 @@
+{
+  "name": "@plugger-open-code/claude-marketplace",
+  "version": "0.1.0",
+  "description": "Claude Code marketplace ecosystem for OpenCode — discover, search and install plugins from Claude Code marketplaces using .claude-plugin/plugin.json directly.",
+  "author": {
+    "name": "plugger-open-code"
+  },
+  "license": "MIT",
+  "keywords": ["marketplace", "claude-code", "plugins", "discovery"],
+  "commands": [
+    {
+      "name": "/marketplace-add",
+      "description": "Add a Claude Code marketplace (GitHub repo or Git URL)",
+      "handler": "dist/commands/marketplace.js",
+      "export": "marketplaceAdd"
+    },
+    {
+      "name": "/marketplace-list",
+      "description": "List all added marketplaces",
+      "handler": "dist/commands/marketplace.js",
+      "export": "marketplaceList"
+    },
+    {
+      "name": "/marketplace-remove",
+      "description": "Remove a marketplace",
+      "handler": "dist/commands/marketplace.js",
+      "export": "marketplaceRemove"
+    },
+    {
+      "name": "/plugin-marketplace-search",
+      "description": "Search for plugins across all Claude Code marketplaces",
+      "handler": "dist/commands/plugin-market.js",
+      "export": "pluginMarketplaceSearch"
+    },
+    {
+      "name": "/plugin-marketplace-install",
+      "description": "Install a plugin from a marketplace",
+      "handler": "dist/commands/plugin-market.js",
+      "export": "pluginMarketplaceInstall"
+    },
+    {
+      "name": "/plugin-marketplace-list",
+      "description": "List plugins in a marketplace",
+      "handler": "dist/commands/plugin-market.js",
+      "export": "pluginMarketplaceList"
+    }
+  ]
+}

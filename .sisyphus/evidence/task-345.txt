@@ -1,0 +1,41 @@
+=== TASK 345 EVIDENCE: Types + Sources + Fixtures ===
+=== Date: Mon May 11 17:02:03 CEST 2026 ===
+=== Task 3 (Types) + Task 4 (Fixtures) + Task 5 (Sources) ===
+
+=== Verification Results ===
+
+1. bun test __tests__/marketplace/sources.test.ts:
+   8 pass, 0 fail, 9 expect() calls
+   - resolveMarketplaceSource > resolves github source with defaults
+   - resolveMarketplaceSource > resolves github source with custom ref
+   - resolveMarketplaceSource > resolves git source with custom URL
+   - resolveMarketplaceSource > resolves git source with custom ref and path
+   - resolveMarketplaceSource > throws on missing repo for github source
+   - resolveMarketplaceSource > throws on missing url for git source
+   - resolvePluginSource > uses .claude-plugin/plugin.json by default
+   - resolvePluginSource > uses custom path with plugin.json
+
+2. bun test __tests__/schemas/:
+   No schema tests found yet (expected — will be written in Wave 2). Exits cleanly.
+
+3. npx tsc --noEmit:
+   Zero errors. Clean TypeScript compilation.
+
+=== Files Created (Task 2 stubs + Task 3 + Task 4 + Task 5) ===
+
+Task 2 — Schema stubs:
+  src/schemas/marketplace.ts
+  src/schemas/plugin.ts
+
+Task 3 — Type definitions:
+  src/types/index.ts
+
+Task 4 — Test fixtures:
+  __tests__/fixtures/valid-marketplace.json
+  __tests__/fixtures/valid-plugin.json
+  __tests__/fixtures/invalid-marketplace.json
+  __tests__/fixtures/invalid-plugin.json
+
+Task 5 — Marketplace source resolver:
+  src/marketplace/sources.ts
+  __tests__/marketplace/sources.test.ts

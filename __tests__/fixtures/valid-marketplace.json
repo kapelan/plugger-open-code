@@ -1,0 +1,42 @@
+{
+  "name": "test-marketplace",
+  "owner": {
+    "name": "Test Org",
+    "email": "test@example.com",
+    "url": "https://example.com"
+  },
+  "plugins": [
+    {
+      "name": "github-plugin",
+      "source": {
+        "source": "github",
+        "repo": "test/plugin-a"
+      },
+      "description": "A test plugin from GitHub"
+    },
+    {
+      "name": "git-plugin",
+      "source": {
+        "source": "git",
+        "url": "https://gitlab.com/test/plugin-b.git"
+      },
+      "tags": ["test", "example"]
+    },
+    {
+      "name": "full-plugin",
+      "source": {
+        "source": "github",
+        "repo": "test/full-plugin",
+        "ref": "main"
+      },
+      "category": "development",
+      "tags": ["full", "featured"],
+      "description": "A fully specified plugin",
+      "version": "2.0.0",
+      "author": {
+        "name": "Full Author",
+        "email": "author@example.com"
+      }
+    }
+  ]
+}

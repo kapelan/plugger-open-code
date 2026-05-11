@@ -1,0 +1,77 @@
+{
+  "active_plan": "/Users/kapelan/Projects/kaplan_studio/plugger-open-code/.sisyphus/plans/plugin-claude-code-marketplace.md",
+  "started_at": "2026-05-11T14:34:37.584Z",
+  "session_ids": [
+    "ses_1e8b2c8c5ffeMGCEgEoWfgUY7K",
+    "ses_1e863d841ffetEwp6lGc1bK6kZ",
+    "ses_1e8631832ffeIaBvCvMc5niw0R",
+    "ses_1e86243f0ffeTKLrEAkjYP57YI",
+    "ses_1e85f27b1ffePMdaxtQieByvOY",
+    "ses_1e85e73a4ffdJlvdfIELQxLBPW",
+    "ses_1e85cf574ffe5bf0yB2SMRKaYa",
+    "ses_1e85ccf9dffenmKwKMryWgXlP8",
+    "ses_1e85c8ffbffdpumUwJ4ao1xmpJ",
+    "ses_1e85c56e3ffe2J8hKOH9fgvU4r"
+  ],
+  "session_origins": {
+    "ses_1e8b2c8c5ffeMGCEgEoWfgUY7K": "direct",
+    "ses_1e863d841ffetEwp6lGc1bK6kZ": "appended",
+    "ses_1e8631832ffeIaBvCvMc5niw0R": "appended",
+    "ses_1e86243f0ffeTKLrEAkjYP57YI": "appended",
+    "ses_1e85f27b1ffePMdaxtQieByvOY": "appended",
+    "ses_1e85e73a4ffdJlvdfIELQxLBPW": "appended",
+    "ses_1e85cf574ffe5bf0yB2SMRKaYa": "appended",
+    "ses_1e85ccf9dffenmKwKMryWgXlP8": "appended",
+    "ses_1e85c8ffbffdpumUwJ4ao1xmpJ": "appended",
+    "ses_1e85c56e3ffe2J8hKOH9fgvU4r": "appended"
+  },
+  "plan_name": "plugin-claude-code-marketplace",
+  "agent": "atlas",
+  "task_sessions": {
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "Project scaffolding + package.json + tsconfig [quick] [Wave 1]",
+      "session_id": "ses_1e886e918ffet0vdsCzolMsiFw",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-05-11T14:40:05.264Z"
+    },
+    "todo:6": {
+      "task_key": "todo:6",
+      "task_label": "6",
+      "task_title": "Marketplace manager: clone, cache, parse marketplace.json [deep] [Wave 2]",
+      "session_id": "ses_1e8672be8ffe5itDc4yb7cE08o",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-05-11T15:14:57.546Z"
+    },
+    "todo:8": {
+      "task_key": "todo:8",
+      "task_label": "8",
+      "task_title": "Plugin installer: install translated plugin into OpenCode [unspecified-high] [Wave 2]",
+      "session_id": "ses_1e86243f0ffeTKLrEAkjYP57YI",
+      "agent": "Sisyphus-Junior",
+      "category": "quick",
+      "updated_at": "2026-05-11T15:17:54.099Z"
+    },
+    "todo:11": {
+      "task_key": "todo:11",
+      "task_label": "11",
+      "task_title": "opencode.plugin.json manifest + plugin registration [quick] [Wave 3]",
+      "session_id": "ses_1e85e73a4ffdJlvdfIELQxLBPW",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-05-11T15:22:04.006Z"
+    },
+    "final-wave:f1": {
+      "task_key": "final-wave:f1",
+      "task_label": "F1",
+      "task_title": "**Plan Compliance Audit** — `oracle`",
+      "session_id": "ses_1e85c56e3ffe2J8hKOH9fgvU4r",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-05-11T15:37:18.086Z"
+    }
+  }
+}
