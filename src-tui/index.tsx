@@ -1,5 +1,5 @@
 /**
- * @sulesky/claude-marketplace — TUI module
+ * @sulesky/opencode-plugger — TUI module
  *
  * `/plugin` slash command opens a dialog-driven flow: Discover / Installed /
  * Marketplaces / Add marketplace. Install picks a scope (global vs project),
@@ -673,5 +673,5 @@ export const tui: TuiPlugin = async (api) => {
   ]);
 };
 
-export const id = '@sulesky/claude-marketplace';
+export const id = '@sulesky/opencode-plugger';
 export default { id, tui } satisfies { id: string; tui: TuiPlugin };

@@ -1,5 +1,5 @@
 /**
- * @sulesky/claude-marketplace
+ * @sulesky/opencode-plugger
  *
  * OpenCode plugin entry point. Exposes marketplace command handlers as
  * OpenCode tools so they're invokable from the assistant.

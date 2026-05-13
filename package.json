@@ -1,7 +1,7 @@
 {
-  "name": "@sulesky/claude-marketplace",
+  "name": "@sulesky/opencode-plugger",
   "version": "0.1.0",
-  "description": "OpenCode plugin bringing the Claude Code plugin/marketplace ecosystem (commands, skills, MCP servers, hooks) into OpenCode",
+  "description": "Use Claude Code plugins (commands, skills, MCP servers, hooks) inside OpenCode.",
   "keywords": [
     "opencode",
     "opencode-plugin",
@@ -9,6 +9,15 @@
     "marketplace",
     "plugins"
   ],
+  "homepage": "https://github.com/kapelan/plugger-open-code#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kapelan/plugger-open-code.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kapelan/plugger-open-code/issues"
+  },
+  "author": "Lucjan Sulewski",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

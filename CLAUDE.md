@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-`@sulesky/claude-marketplace` — an **OpenCode plugin** that brings the **Claude Code plugin/marketplace ecosystem** into OpenCode. Mirrors Claude Code's `/plugin` UI as closely as the OpenCode plugin API allows.
+`@sulesky/opencode-plugger` — an **OpenCode plugin** that brings the **Claude Code plugin/marketplace ecosystem** into OpenCode. Mirrors Claude Code's `/plugin` UI as closely as the OpenCode plugin API allows.
 
 **Critical conceptual distinction (do not confuse):**
 
