@@ -371,24 +371,43 @@ async function openDiscoverInMarketplace(api: TuiPluginApi, mpName: string): Pro
   }
   const installs = await fetchInstallCounts();
   const plugins = await listPluginsInMarketplace(mp, installs);
-  const installed = new Set(await listInstalledPlugins());
+
+  // Map plugin id → list of scope kinds it's installed in (one plugin can be
+  // in both global and project). Used to disable already-installed entries
+  // in the list and to label them with where they came from.
+  const projectDir = currentProjectDir(api);
+  const installedEntries = await listInstalledPlugins(projectDir);
+  const installedScopes = new Map<string, Array<'global' | 'project'>>();
+  for (const e of installedEntries) {
+    const scopes = installedScopes.get(e.id) ?? [];
+    scopes.push(e.scope.kind);
+    installedScopes.set(e.id, scopes);
+  }
+
   plugins.sort((a, b) => b.installs - a.installs || a.name.localeCompare(b.name));
 
-  const options: TuiDialogSelectOption<string>[] = plugins.map(p => ({
-    title: p.name,
-    value: p.name,
-    description: [
-      `${p.marketplace} · ${formatInstalls(p.installs)}${p.version ? ` · v${p.version}` : ''}${installed.has(`${p.name}@${p.marketplace}`) ? ' · installed' : ''}`,
-      p.description ?? '',
-    ].filter(Boolean).join('\n'),
-    category: p.category || p.marketplace,
-  }));
+  const options: TuiDialogSelectOption<string>[] = plugins.map(p => {
+    const id = `${p.name}@${p.marketplace}`;
+    const inScopes = installedScopes.get(id);
+    const isInstalled = !!inScopes;
+    const installedTag = isInstalled ? ` · installed (${inScopes!.join('+')})` : '';
+    return {
+      title: isInstalled ? `${p.name}  ✓` : p.name,
+      value: p.name,
+      description: [
+        `${p.marketplace} · ${formatInstalls(p.installs)}${p.version ? ` · v${p.version}` : ''}${installedTag}`,
+        p.description ?? '',
+      ].filter(Boolean).join('\n'),
+      category: p.category || p.marketplace,
+      disabled: isInstalled,
+    };
+  });
   options.push({ title: '← Back', value: '__back__' });
 
   api.ui.dialog.setSize('xlarge');
   api.ui.dialog.replace(() => (
     api.ui.DialogSelect({
-      title: `Discover · ${mpName} (${plugins.length} plugins)`,
+      title: `Discover · ${mpName} (${plugins.length} plugins, ${installedScopes.size} installed)`,
       placeholder: 'Search plugins...',
       options,
       onSelect: async (opt) => {
