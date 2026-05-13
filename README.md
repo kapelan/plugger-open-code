@@ -14,12 +14,12 @@ activate inside OpenCode.
 
 ```
 /plugin
-┌──── Plugger · Claude Code plugins for OpenCode ────────┐
-│ ▸ Discover         Browse the official CC marketplace  │
-│   Installed        Plugins cloned here, Update / Remove│
-│   Marketplaces     Add / Refresh / Remove marketplaces │
-│   + Add marketplace                                    │
-└────────────────────────────────────────────────────────┘
+┌──── Plugger · Claude Code plugins for OpenCode ───────────┐
+│ ▸ Discover         Browse the official CC marketplace     │
+│   Installed        Plugins cloned here, Update / Uninstall│
+│   Marketplaces     Add / Refresh / Remove marketplaces    │
+│   + Add marketplace                                       │
+└───────────────────────────────────────────────────────────┘
 ```
 
 ## Why
@@ -64,6 +64,11 @@ on first launch (TUI pulls server in transitively as a dependency).
 
 Project-scoped install works the same — drop the same files at the project
 root and the spec only applies inside that project.
+
+> **AI-assistant install:** paste [INSTALL.md](./INSTALL.md) at Claude Code /
+> OpenCode / Cursor and let it run the steps. The file ships idempotent
+> Node one-liners that won't clobber your other plugins, model setting, or
+> MCP servers.
 
 ## Use
 
@@ -150,9 +155,16 @@ npm version patch          # bump + git tag
 git push --follow-tags     # tag push triggers .github/workflows/release.yml
 ```
 
-Watch [Actions](https://github.com/kapelan/plugger-open-code/actions). The
-release job checks the tag matches `package.json` version, runs typecheck +
-build + tests, then `npm publish --provenance --access public`.
+Watch [Actions](https://github.com/kapelan/plugger-open-code/actions). One tag,
+two npm publishes from the same git ref:
+
+1. Server (`@sulesky/opencode-plugger`) — straight from the repo's `package.json`.
+2. TUI (`@sulesky/opencode-plugger-tui`) — workflow templates `package.tui.json`
+   in as `package.json` (filling in the matching version + server dep), publishes,
+   then restores the server `package.json`.
+
+Tag must match `package.json` version. Typecheck + build + tests run first;
+on failure neither package is published.
 
 **One-time setup**: `npm token create --type=automation`, add as repo secret
 `NPM_TOKEN` (Settings → Secrets and variables → Actions).

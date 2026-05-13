@@ -35,7 +35,8 @@
   "files": [
     "dist",
     "dist-tui",
-    "README.md"
+    "README.md",
+    "INSTALL.md"
   ],
   "scripts": {
     "test": "bun test",
