@@ -1,25 +1,44 @@
 {
   "name": "@plugger-open-code/claude-marketplace",
   "version": "0.1.0",
-  "description": "OpenCode plugin bringing Claude Code marketplace ecosystem to OpenCode",
+  "description": "OpenCode plugin bringing the Claude Code plugin/marketplace ecosystem (commands, skills, MCP servers, hooks) into OpenCode",
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "claude-code",
+    "marketplace",
+    "plugins"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./tui": {
+      "default": "./dist-tui/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
-    "dist-tui"
+    "dist-tui",
+    "README.md"
   ],
   "scripts": {
     "test": "bun test",
     "typecheck": "tsc --noEmit",
     "build": "tsc && bun run build:tui",
-    "build:tui": "bun build src-tui/index.tsx --outfile dist-tui/index.js --target=bun --external @opencode-ai/plugin --external @opentui/solid --external @opentui/core --external solid-js --external solid-js/web"
+    "build:tui": "bun build src-tui/index.tsx --outfile dist-tui/index.js --target=bun --external @opencode-ai/plugin --external @opentui/solid --external @opentui/core --external solid-js --external solid-js/web",
+    "prepublishOnly": "npm run typecheck && npm run build && npm test"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=1.14"
   },
   "dependencies": {
     "execa": "^9.6.1",
