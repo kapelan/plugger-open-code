@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # `npm publish --provenance` needs the full commit ref, not a shallow clone.
+          # `npm publish --provenance` needs the full commit ref.
           fetch-depth: 0
 
       - uses: oven-sh/setup-bun@v2
@@ -41,9 +41,8 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      # Guard against publishing a tag whose code doesn't match its declared
-      # version. `npm version` keeps these in sync locally; this catches the
-      # case where someone tags by hand and forgets to bump.
+      # Guard: tag must match package.json version. Without this a hand-rolled
+      # `git tag v9.9.9` would happily ship whatever is in package.json.
       - name: Verify tag matches package.json version
         run: |
           PKG_VERSION="v$(node -p "require('./package.json').version")"
@@ -62,7 +61,39 @@ jobs:
       - name: Test
         run: bun test
 
-      - name: Publish
+      # OpenCode's plugin spec resolver treats `<pkg>/<subpath>@<ver>` as a
+      # single npm package name. So the TUI lives in a sibling package
+      # (`@sulesky/opencode-plugger-tui`) that depends on the main one.
+      # Both publish from the same git tag, same version.
+      - name: Publish server package
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Swap in TUI package.json
+        run: |
+          # Save the server package.json for restoration after publish.
+          cp package.json package.server.json.bak
+          # Template the version into package.tui.json (both the `version`
+          # field and the peerDependency on the server package).
+          VERSION="$(node -p "require('./package.json').version")"
+          node -e "
+            const fs = require('fs');
+            const tui = JSON.parse(fs.readFileSync('package.tui.json', 'utf-8'));
+            delete tui.\$comment;
+            delete tui.dependencies.\$comment_dependencies;
+            tui.version = '$VERSION';
+            tui.dependencies['@sulesky/opencode-plugger'] = '$VERSION';
+            fs.writeFileSync('package.json', JSON.stringify(tui, null, 2) + '\n');
+          "
+          echo '--- TUI package.json ---'
+          cat package.json
+
+      - name: Publish TUI package
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Restore server package.json
+        if: always()
+        run: mv package.server.json.bak package.json

@@ -1,6 +1,6 @@
 {
   "name": "@sulesky/opencode-plugger",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Use Claude Code plugins (commands, skills, MCP servers, hooks) inside OpenCode.",
   "keywords": [
     "opencode",
@@ -26,8 +26,9 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./tui": {
-      "default": "./dist-tui/index.js"
+    "./internal": {
+      "types": "./dist/internal.d.ts",
+      "import": "./dist/internal.js"
     },
     "./package.json": "./package.json"
   },
@@ -40,7 +41,7 @@
     "test": "bun test",
     "typecheck": "tsc --noEmit",
     "build": "tsc && bun run build:tui",
-    "build:tui": "bun build src-tui/index.tsx --outfile dist-tui/index.js --target=bun --external @opencode-ai/plugin --external @opentui/solid --external @opentui/core --external solid-js --external solid-js/web",
+    "build:tui": "bun build src-tui/index.tsx --outfile dist-tui/index.js --target=bun --external @opencode-ai/plugin --external @opentui/solid --external @opentui/core --external solid-js --external solid-js/web --external @sulesky/opencode-plugger",
     "prepublishOnly": "npm run typecheck && npm run build && npm test"
   },
   "publishConfig": {

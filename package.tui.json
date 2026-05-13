@@ -1,0 +1,39 @@
+{
+  "$comment": "Template for the @sulesky/opencode-plugger-tui sibling package. The CI release workflow swaps this in as package.json for the second `npm publish` step, then restores the server package.json. Keep `version` / `peerDependencies.@sulesky/opencode-plugger` in lockstep with the main package.json — the workflow does this automatically by reading the server version and templating it in.",
+  "name": "@sulesky/opencode-plugger-tui",
+  "version": "0.0.0",
+  "description": "TUI module for @sulesky/opencode-plugger — register in `tui.json` `plugin[]`.",
+  "keywords": ["opencode", "opencode-plugin", "opencode-tui-plugin", "claude-code"],
+  "homepage": "https://github.com/kapelan/plugger-open-code#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kapelan/plugger-open-code.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kapelan/plugger-open-code/issues"
+  },
+  "author": "Lucjan Sulewski",
+  "type": "module",
+  "main": "./dist-tui/index.js",
+  "exports": {
+    ".": {
+      "default": "./dist-tui/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist-tui",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=1.14"
+  },
+  "dependencies": {
+    "$comment_dependencies": "Pinned to the exact server version we publish from the same git tag — keeps the TUI bundle's runtime imports from drifting against a server build that doesn't yet export what it expects. Workflow templates this in.",
+    "@sulesky/opencode-plugger": "0.0.0"
+  },
+  "license": "MIT"
+}

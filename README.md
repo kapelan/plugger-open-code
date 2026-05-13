@@ -39,8 +39,10 @@ It works with:
 
 ## Install
 
-Add **both** entries to your OpenCode config (server module to `opencode.json`,
-TUI module to `tui.json`):
+Plugger ships as two npm packages — server module to `opencode.json`, TUI
+module to `tui.json`. (OpenCode's plugin spec resolver treats the whole
+string as a package name, so subpaths like `pkg/tui` don't work — hence two
+sibling packages on npm, released together from the same git tag.)
 
 ```jsonc
 // ~/.config/opencode/opencode.json
@@ -53,12 +55,12 @@ TUI module to `tui.json`):
 ```jsonc
 // ~/.config/opencode/tui.json
 {
-  "plugin": ["@sulesky/opencode-plugger/tui@latest"]
+  "plugin": ["@sulesky/opencode-plugger-tui@latest"]
 }
 ```
 
-Restart OpenCode. Bun fetches the package into `~/.cache/opencode/packages/` on
-first launch.
+Restart OpenCode. Bun fetches both packages into `~/.cache/opencode/packages/`
+on first launch (TUI pulls server in transitively as a dependency).
 
 Project-scoped install works the same — drop the same files at the project
 root and the spec only applies inside that project.

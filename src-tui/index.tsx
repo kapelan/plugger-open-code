@@ -90,8 +90,8 @@ async function ensureOfficialMarketplace(): Promise<void> {
   );
   if (hasOfficial) return;
   try {
-    const { sharedMarketplaceManager } = await import('../dist/marketplace/manager.js');
-    const { toPluginSource } = await import('../dist/schemas/marketplace.js');
+    const { sharedMarketplaceManager } = await import('@sulesky/opencode-plugger/internal');
+    const { toPluginSource } = await import('@sulesky/opencode-plugger/internal');
     await sharedMarketplaceManager.init();
     await sharedMarketplaceManager.addMarketplace(toPluginSource(OFFICIAL_MARKETPLACE));
   } catch {
@@ -291,7 +291,7 @@ async function refreshMarketplace(api: TuiPluginApi, mpName: string): Promise<vo
     const list = await listMarketplaces();
     const entry = list.find(m => m.name === mpName);
     if (!entry) throw new Error('Marketplace not found in registry');
-    const { sharedMarketplaceManager } = await import('../dist/marketplace/manager.js');
+    const { sharedMarketplaceManager } = await import('@sulesky/opencode-plugger/internal');
     await sharedMarketplaceManager.removeMarketplace(mpName);
     await sharedMarketplaceManager.init();
     await sharedMarketplaceManager.addMarketplace(entry.source as any, mpName);
@@ -310,7 +310,7 @@ function confirmRemoveMarketplace(api: TuiPluginApi, mpName: string): void {
       message: 'Unregisters from known_marketplaces.json and deletes the on-disk clone. Installed plugins from this marketplace are NOT affected.',
       onConfirm: async () => {
         try {
-          const { sharedMarketplaceManager } = await import('../dist/marketplace/manager.js');
+          const { sharedMarketplaceManager } = await import('@sulesky/opencode-plugger/internal');
           await sharedMarketplaceManager.removeMarketplace(mpName);
           api.ui.toast({ variant: 'success', title: 'Removed', message: mpName });
         } catch (e) {
@@ -336,8 +336,8 @@ function openAddMarketplaceDialog(api: TuiPluginApi): void {
         if (!value) return;
         busy = true;
         try {
-          const { sharedMarketplaceManager } = await import('../dist/marketplace/manager.js');
-          const { toPluginSource } = await import('../dist/schemas/marketplace.js');
+          const { sharedMarketplaceManager } = await import('@sulesky/opencode-plugger/internal');
+          const { toPluginSource } = await import('@sulesky/opencode-plugger/internal');
           const source = toPluginSource(value);
           await sharedMarketplaceManager.init();
           const mp = await sharedMarketplaceManager.addMarketplace(source);
@@ -516,7 +516,7 @@ function confirmUpdate(api: TuiPluginApi, entry: InstalledEntry): void {
       message: `Wipes ${installPathFor(entry.id, entry.scope)}, re-fetches from the original source recorded in meta, and re-runs the translator. Use this to pick up upstream changes.`,
       onConfirm: async () => {
         try {
-          const { updatePlugin } = await import('../dist/installer/install.js');
+          const { updatePlugin } = await import('@sulesky/opencode-plugger/internal');
           const result = await updatePlugin(entry.id, { scope: entry.scope });
           api.ui.toast({
             variant: 'success',
@@ -541,7 +541,7 @@ function confirmUninstall(api: TuiPluginApi, entry: InstalledEntry): void {
       message: `Deletes ${installPathFor(entry.id, entry.scope)} and any translated commands/skills/MCP entries/hook shims in the ${entry.scope.kind} scope.`,
       onConfirm: async () => {
         try {
-          const { uninstallPlugin } = await import('../dist/installer/uninstall.js');
+          const { uninstallPlugin } = await import('@sulesky/opencode-plugger/internal');
           await uninstallPlugin(entry.id, { scope: entry.scope });
           api.ui.toast({ variant: 'success', title: 'Uninstalled', message: `${entry.id} [${entry.scope.kind}]` });
         } catch (e) {
@@ -603,7 +603,7 @@ function confirmInstallWithScope(api: TuiPluginApi, plugin: PluginEntry, scope: 
       message,
       onConfirm: async () => {
         try {
-          const { installPlugin } = await import('../dist/installer/install.js');
+          const { installPlugin } = await import('@sulesky/opencode-plugger/internal');
           const result = await installPlugin(
             { name: plugin.name, source: plugin.source as any },
             plugin.marketplace,
