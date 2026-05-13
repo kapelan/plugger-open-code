@@ -9,20 +9,15 @@ import type { PluginManifest } from '../schemas/plugin.js';
 // Re-export inferred types from Zod schemas
 export type { Marketplace, PluginMarketplaceEntry, PluginSource, PluginAuthor, PluginManifest };
 
-// An installed plugin from a marketplace
+/** An installed plugin from a marketplace. Returned by installPlugin/updatePlugin. */
 export interface InstalledPlugin {
-  id: string;          // '{name}@{marketplace}'
+  /** `<name>@<marketplace>`. */
+  id: string;
   name: string;
   marketplace: string;
   manifest: PluginManifest;
   installPath: string;
-}
-
-// A loaded plugin ready for use
-export interface LoadedPlugin {
-  id: string;
-  name: string;
-  manifest: PluginManifest;
-  path: string;
-  source: string;
+  /** What the translator wrote outside `installPath`. Useful for callers
+   *  who want to report actual activation (vs trusting manifest fields). */
+  artifacts: import('../translator/types.js').InstalledArtifacts;
 }

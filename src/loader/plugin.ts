@@ -2,6 +2,7 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 import { PluginManifestSchema, type PluginManifest } from '../schemas/plugin.js';
+import { errMsg } from '../util/errors.js';
 
 export interface PluginLoadResult {
   id: string;
@@ -17,7 +18,7 @@ export async function loadPlugin(pluginDir: string, options?: { id?: string; sou
   if (!existsSync(manifestPath)) throw new Error(`plugin.json not found at ${manifestPath}`);
   const content = await readFile(manifestPath, 'utf-8');
   let raw: unknown;
-  try { raw = JSON.parse(content); } catch (e) { throw new Error(`Invalid JSON: ${(e as Error).message}`); }
+  try { raw = JSON.parse(content); } catch (e) { throw new Error(`Invalid JSON: ${errMsg(e)}`); }
   const manifest = PluginManifestSchema.parse(raw);
   const warnings: string[] = [];
   if (manifest.agents) warnings.push('agents field present — Claude Code agents are not supported in OpenCode');

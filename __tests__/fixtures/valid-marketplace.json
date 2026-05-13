@@ -5,28 +5,34 @@
     "email": "test@example.com",
     "url": "https://example.com"
   },
+  "metadata": {
+    "description": "Sample fixture marketplace",
+    "version": "1.0.0"
+  },
   "plugins": [
     {
-      "name": "github-plugin",
+      "name": "first-plugin",
       "source": {
-        "source": "github",
-        "repo": "test/plugin-a"
+        "source": "url",
+        "url": "https://github.com/test/plugin-a.git"
       },
-      "description": "A test plugin from GitHub"
+      "description": "A test plugin"
     },
     {
-      "name": "git-plugin",
+      "name": "second-plugin",
       "source": {
-        "source": "git",
-        "url": "https://gitlab.com/test/plugin-b.git"
+        "source": "url",
+        "url": "https://gitlab.com/test/plugin-b.git",
+        "ref": "main"
       },
-      "tags": ["test", "example"]
+      "tags": ["test", "example"],
+      "strict": true
     },
     {
       "name": "full-plugin",
       "source": {
-        "source": "github",
-        "repo": "test/full-plugin",
+        "source": "url",
+        "url": "https://github.com/test/full-plugin.git",
         "ref": "main"
       },
       "category": "development",

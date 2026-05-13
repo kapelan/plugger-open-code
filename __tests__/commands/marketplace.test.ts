@@ -7,10 +7,10 @@ describe('marketplace commands', () => {
     expect(result.success).toBe(false);
   });
 
-  test('marketplaceAdd fails with invalid source type', async () => {
-    const result = await marketplaceAdd(['--source', 'invalid', '--repo', 'x/y']);
+  test('marketplaceAdd fails with bad shorthand token', async () => {
+    const result = await marketplaceAdd(['not-a-valid-source']);
     expect(result.success).toBe(false);
-    expect(result.message).toContain('Unknown source type');
+    expect(result.message).toMatch(/Invalid source/);
   });
 
   test('marketplaceAdd github shorthand works', async () => {
@@ -20,10 +20,10 @@ describe('marketplace commands', () => {
     expect(result.message).toContain('Failed');
   });
 
-  test('marketplaceList returns no results message', async () => {
+  test('marketplaceList succeeds', async () => {
+    // Don't assert on contents — tests share real ~/.opencode/ state.
     const result = await marketplaceList();
     expect(result.success).toBe(true);
-    expect(result.message).toContain('No marketplaces');
   });
 
   test('marketplaceRemove fails with no args', async () => {

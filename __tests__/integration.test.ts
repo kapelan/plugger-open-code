@@ -5,18 +5,23 @@ import { tmpdir } from 'os';
 import { execa } from 'execa';
 import { MarketplaceManager } from '../src/marketplace/manager.js';
 import { installPlugin } from '../src/installer/install.js';
+import { uninstallPlugin } from '../src/installer/uninstall.js';
 import { loadPlugin } from '../src/loader/plugin.js';
 
 describe('Integration: marketplace → install pipeline', () => {
   let testMarketplaceDir: string;
   let testPluginDir: string;
+  let testProjectDir: string;
   let uniqueMarketplaceName: string;
   let uniquePluginName: string;
 
   beforeAll(async () => {
-    uniqueMarketplaceName = `test-mp-${Date.now()}`;
-    uniquePluginName = `test-plugin-${Date.now()}`;
-    
+    // Timestamp-only IDs (no `-`) so the strict id regex accepts them.
+    uniqueMarketplaceName = `testmp${Date.now()}`;
+    uniquePluginName = `testplugin${Date.now()}`;
+    testProjectDir = join(tmpdir(), `integ-proj-${Date.now()}`);
+    await mkdir(testProjectDir, { recursive: true });
+
     // Create a mock marketplace with a test plugin
     testMarketplaceDir = join(tmpdir(), `mp-${Date.now()}`);
     const mpPluginDir = join(testMarketplaceDir, '.claude-plugin');
@@ -55,6 +60,7 @@ describe('Integration: marketplace → install pipeline', () => {
   afterAll(async () => {
     await rm(testMarketplaceDir, { recursive: true, force: true }).catch(() => {});
     await rm(testPluginDir, { recursive: true, force: true }).catch(() => {});
+    await rm(testProjectDir, { recursive: true, force: true }).catch(() => {});
   });
 
   test('loadPlugin reads valid .claude-plugin/plugin.json', async () => {
@@ -63,13 +69,15 @@ describe('Integration: marketplace → install pipeline', () => {
     expect(plugin.manifest.version).toBe('1.0.0');
   });
 
-  test('installPlugin clones and installs a plugin', async () => {
-    const entry = { name: uniquePluginName, source: { source: 'git' as const, url: `file://${testPluginDir}`, ref: 'main' } };
-    const installed = await installPlugin(entry, uniqueMarketplaceName);
+  test('installPlugin clones and installs a plugin (project scope, full uninstall cleanup)', async () => {
+    const entry = { name: uniquePluginName, source: { source: 'url' as const, url: `file://${testPluginDir}`, ref: 'main' } };
+    const scope = { kind: 'project' as const, projectDir: testProjectDir };
+    const installed = await installPlugin(entry, uniqueMarketplaceName, { scope });
     expect(installed.id).toBe(`${uniquePluginName}@${uniqueMarketplaceName}`);
     expect(installed.name).toBe(uniquePluginName);
-    // Cleanup
-    await rm(installed.installPath, { recursive: true, force: true }).catch(() => {});
+    // Full uninstall — verifies hook shim + plugin[] entry get reverted, not
+    // just the clone dir.
+    await uninstallPlugin(installed.id, { scope });
   });
 
   test('full pipeline: manager adds marketplace → searches → finds plugin', async () => {
@@ -79,7 +87,7 @@ describe('Integration: marketplace → install pipeline', () => {
       owner: { name: 'Test' },
       plugins: [{
         name: uniquePluginName,
-        source: { source: 'git' as const, url: `file://${testPluginDir}`, ref: 'main' },
+        source: { source: 'url' as const, url: `file://${testPluginDir}`, ref: 'main' },
         description: 'A test plugin',
         tags: ['test']
       }]
@@ -88,23 +96,27 @@ describe('Integration: marketplace → install pipeline', () => {
     await execa('git', ['add', '.'], { cwd: testMarketplaceDir });
     await execa('git', ['-c', 'user.name=test', '-c', 'user.email=test@t.com', 'commit', '-m', 'add plugin'], { cwd: testMarketplaceDir });
 
-    // Add marketplace
-    const manager = new MarketplaceManager();
+    // Isolated baseDir so this test doesn't pollute `~/.opencode/marketplaces/`.
+    const baseDir = join(tmpdir(), `mpmgr-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    const manager = new MarketplaceManager({ baseDir });
     await manager.init();
-    const mp = await manager.addMarketplace({ source: 'git', url: `file://${testMarketplaceDir}`, ref: 'main' }, uniqueMarketplaceName);
+    const mp = await manager.addMarketplace({ source: 'url', url: `file://${testMarketplaceDir}`, ref: 'main' }, uniqueMarketplaceName);
     expect(mp.plugins.length).toBe(1);
 
     const results = await manager.searchPlugins(uniquePluginName);
     expect(results.length).toBe(1);
     expect(results[0].plugin.name).toBe(uniquePluginName);
     expect(results[0].marketplace).toBe(uniqueMarketplaceName);
-    
+
     await manager.removeMarketplace(uniqueMarketplaceName);
+    await rm(baseDir, { recursive: true, force: true });
   });
 
-  test('searchPlugins returns empty for non-matching query', async () => {
-    const manager = new MarketplaceManager();
+  test('searchPlugins returns empty for non-matching query (isolated baseDir)', async () => {
+    const baseDir = join(tmpdir(), `mpmgr-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    const manager = new MarketplaceManager({ baseDir });
     const results = await manager.searchPlugins('does-not-exist-xyz');
-    expect(results.length).toBe(0);
+    expect(results).toEqual([]);
+    await rm(baseDir, { recursive: true, force: true });
   });
 });

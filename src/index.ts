@@ -25,7 +25,8 @@ const tokenize = (s: string): string[] =>
 const render = (r: { success: boolean; message: string }): string =>
   r.success ? r.message : `error: ${r.message}`;
 
-export const ClaudeMarketplacePlugin: Plugin = async () => ({
+export const ClaudeMarketplacePlugin: Plugin = async () => {
+  return {
   tool: {
     marketplace_add: tool({
       description:
@@ -38,9 +39,15 @@ export const ClaudeMarketplacePlugin: Plugin = async () => ({
           .string()
           .optional()
           .describe('Optional name override. Defaults to the repo name.'),
+        ref: z
+          .string()
+          .optional()
+          .describe('Optional branch or tag to clone. Defaults to the remote HEAD.'),
       },
-      async execute({ source, name }) {
-        const args = name ? [source, '--name', name] : [source];
+      async execute({ source, name, ref }) {
+        const args: string[] = [source];
+        if (name) args.push('--name', name);
+        if (ref) args.push('--ref', ref);
         return render(await marketplaceAdd(args));
       },
     }),
@@ -99,6 +106,7 @@ export const ClaudeMarketplacePlugin: Plugin = async () => ({
       },
     }),
   },
-});
+  };
+};
 
 export default ClaudeMarketplacePlugin;

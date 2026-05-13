@@ -1,6 +1,7 @@
 import { sharedMarketplaceManager as manager } from '../marketplace/manager.js';
 import { installPlugin } from '../installer/install.js';
-import type { PluginMarketplaceEntry } from '../schemas/marketplace.js';
+import type { InstalledPlugin } from '../types/index.js';
+import { errMsg } from '../util/errors.js';
 
 export interface CommandResult {
   success: boolean;
@@ -25,7 +26,7 @@ export async function pluginMarketplaceSearch(args: string[]): Promise<CommandRe
     const items = results.map(r => `  ${r.plugin.name}@${r.marketplace} — ${r.plugin.description || 'no description'}`);
     return { success: true, message: `Found ${results.length} plugin(s):\n${items.join('\n')}`, data: results };
   } catch (error) {
-    return { success: false, message: `Search failed: ${(error as Error).message}` };
+    return { success: false, message: `Search failed: ${errMsg(error)}` };
   }
 }
 
@@ -72,23 +73,34 @@ export async function pluginMarketplaceInstall(args: string[]): Promise<CommandR
       return { success: false, message: `Multiple plugins found. Specify the full ID:\n${options.join('\n')}` };
     }
 
-    // Install
     const match = matches[0];
     const installed = await installPlugin(match.plugin, match.marketplace);
-    const caps = [];
-    if (installed.manifest.commands) caps.push('commands');
-    if (installed.manifest.hooks) caps.push('hooks');
-    if (installed.manifest.skills) caps.push('skills');
-    if (installed.manifest.mcpServers) caps.push('MCP servers');
+    const caps = describeActivation(installed);
 
     return {
       success: true,
-      message: `Plugin "${installed.id}" installed successfully!${caps.length ? ` Provides: ${caps.join(', ')}` : ''}`,
+      message: `Plugin "${installed.id}" installed${caps ? ` (${caps})` : ''}.`,
       data: installed,
     };
   } catch (error) {
-    return { success: false, message: `Install failed: ${(error as Error).message}` };
+    return { success: false, message: `Install failed: ${errMsg(error)}` };
   }
+}
+
+/**
+ * Summarize what was activated based on the actual translator output —
+ * not the plugin.json `commands`/`skills` fields (which the translator
+ * ignores). Returns empty string for plugins that activated nothing,
+ * which callers can treat as "no decoration".
+ */
+function describeActivation(installed: InstalledPlugin): string {
+  const a = installed.artifacts;
+  const parts: string[] = [];
+  if (a.commands.length) parts.push(`${a.commands.length} command${a.commands.length === 1 ? '' : 's'}`);
+  if (a.skills.length) parts.push(`${a.skills.length} skill file${a.skills.length === 1 ? '' : 's'}`);
+  if (a.mcpServers.length) parts.push(`${a.mcpServers.length} MCP server${a.mcpServers.length === 1 ? '' : 's'}`);
+  if (a.hooks.length) parts.push('hooks');
+  return parts.join(', ');
 }
 
 /**
@@ -120,6 +132,6 @@ export async function pluginMarketplaceList(args: string[]): Promise<CommandResu
     }
     return { success: true, message: lines.join('\n'), data: known };
   } catch (error) {
-    return { success: false, message: `Error: ${(error as Error).message}` };
+    return { success: false, message: `Error: ${errMsg(error)}` };
   }
 }
