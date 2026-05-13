@@ -673,5 +673,9 @@ export const tui: TuiPlugin = async (api) => {
   ]);
 };
 
-export const id = '@sulesky/opencode-plugger';
+// Must match the NAME OF THE PUBLISHED TUI PACKAGE (not the server). OpenCode's
+// TUI plugin loader rejects modules whose `id` doesn't match the spec it loaded
+// them with — symptom in the log is `"Plugin <spec> does not expose a tui
+// entrypoint"` even though the module clearly exports one.
+export const id = '@sulesky/opencode-plugger-tui';
 export default { id, tui } satisfies { id: string; tui: TuiPlugin };
