@@ -44,11 +44,18 @@ export async function installPlugin(
   // block re-fetches it. Without this we'd silently keep stale content.
   if (opts?.refresh) {
     await rm(installPath, { recursive: true, force: true });
+  } else if (existsSync(installPath)) {
+    // Without `refresh`, refuse to reinstall over an existing clone. Letting
+    // the call succeed would re-run the translator on stale content and
+    // present that as a fresh install — confusing UX. updatePlugin sets
+    // `refresh: true` to take this path explicitly.
+    throw new Error(
+      `Plugin "${pluginId}" is already installed at ${installPath}. ` +
+      `Use Update to re-fetch from source, or Uninstall first.`,
+    );
   }
 
-  if (!existsSync(installPath)) {
-    await fetchInto(installPath, resolved, marketplace);
-  }
+  await fetchInto(installPath, resolved, marketplace);
 
   const loaded = await loadPlugin(installPath, { id: pluginId, source: marketplace });
   for (const w of loaded.warnings) {

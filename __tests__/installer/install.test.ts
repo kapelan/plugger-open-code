@@ -105,6 +105,25 @@ describe('installPlugin', () => {
     await expect(installPlugin(entry, 'foo--bar')).rejects.toThrow(/Invalid marketplace name/);
   });
 
+  test('refuses to reinstall over an existing clone (must use Update)', async () => {
+    const repoDir = await createPluginRepo({ name: 'twice', version: '1.0.0' });
+    const projectDir = join(tmpdir(), `proj-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+    await mkdir(projectDir, { recursive: true });
+    const scope = { kind: 'project' as const, projectDir };
+
+    const entry = { name: 'twice', source: { source: 'url' as const, url: `file://${repoDir}`, ref: 'HEAD' } };
+    await installPlugin(entry, 'mp', { scope });
+
+    await expect(installPlugin(entry, 'mp', { scope })).rejects.toThrow(/already installed/);
+
+    // refresh: true bypasses the check (same code path that updatePlugin uses).
+    await expect(installPlugin(entry, 'mp', { scope, refresh: true })).resolves.toBeDefined();
+
+    await uninstallPlugin('twice@mp', { scope });
+    await rm(repoDir, { recursive: true, force: true });
+    await rm(projectDir, { recursive: true, force: true });
+  });
+
   test('updatePlugin re-fetches from recorded source, re-translates, refreshes meta', async () => {
     // Build a repo, commit v1 of a SKILL, install once.
     const repoDir = join(tmpdir(), `repo-${Date.now()}-${Math.random().toString(36).slice(2)}`);
