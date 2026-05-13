@@ -1,4 +1,4 @@
-# @plugger-open-code/claude-marketplace
+# @sulesky/claude-marketplace
 
 An OpenCode plugin that brings the Claude Code plugin ecosystem into OpenCode:
 discover and install plugins from any Claude Code marketplace, with automatic
@@ -17,7 +17,7 @@ The package ships two entries — a server module (commands/tools, registered in
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    "@plugger-open-code/claude-marketplace@latest"
+    "@sulesky/claude-marketplace@latest"
   ]
 }
 ```
@@ -27,7 +27,7 @@ The package ships two entries — a server module (commands/tools, registered in
 ```jsonc
 {
   "plugin": [
-    "@plugger-open-code/claude-marketplace/tui@latest"
+    "@sulesky/claude-marketplace/tui@latest"
   ]
 }
 ```
@@ -115,8 +115,8 @@ fails fast if the tag's version doesn't match `package.json`, so a hand-rolled
 1. Get an npm automation token: `npm token create --type=automation`.
 2. Add it to the GitHub repo as a secret named `NPM_TOKEN`
    (Settings → Secrets and variables → Actions → New repository secret).
-3. The npm scope (`@plugger-open-code` by default) must be one your token
-   can publish to. Change `name` in `package.json` if not.
+3. The npm scope (`@sulesky` here) must be one your token can publish to.
+   Change `name` in `package.json` if you fork under a different scope.
 
 **Smoke-test a tarball locally before tagging**
 
@@ -124,8 +124,8 @@ fails fast if the tag's version doesn't match `package.json`, so a hand-rolled
 npm pack
 cd /tmp && mkdir smoke && cd smoke && echo '{"type":"module"}' > package.json
 bun add "file:$(realpath ../path/to/plugger-open-code-claude-marketplace-*.tgz)"
-bun -e "console.log(typeof (await import('@plugger-open-code/claude-marketplace')).default)"
-bun -e "console.log((await import('@plugger-open-code/claude-marketplace/tui')).id)"
+bun -e "console.log(typeof (await import('@sulesky/claude-marketplace')).default)"
+bun -e "console.log((await import('@sulesky/claude-marketplace/tui')).id)"
 ```
 
 Both imports must resolve and return real values.

@@ -1,5 +1,5 @@
 {
-  "name": "@plugger-open-code/claude-marketplace",
+  "name": "@sulesky/claude-marketplace",
   "version": "0.1.0",
   "description": "Claude Code marketplace ecosystem for OpenCode — discover, search and install plugins from Claude Code marketplaces using .claude-plugin/plugin.json directly.",
   "author": {
