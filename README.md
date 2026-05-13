@@ -92,30 +92,40 @@ While developing locally, point OpenCode at the working copy:
 Tests use tmpdir for scope and a `baseDir` option on `MarketplaceManager`, so
 `bun test` doesn't pollute `~/.opencode/` or `~/.config/opencode/`.
 
-## Publishing (maintainers)
+## Releasing (maintainers)
+
+Publish is automated via GitHub Actions. Pushing a `v*` tag triggers
+`.github/workflows/release.yml`, which runs typecheck + build + tests and
+then `npm publish --provenance --access public`.
 
 ```bash
-# 1. Bump version (creates git tag).
-npm version patch        # or minor / major
+# Bump version + create the tag + commit it, all in one step.
+npm version patch        # or minor / major / 0.1.0 / etc.
 
-# 2. Publish to npm. `prepublishOnly` runs typecheck + build + tests.
-npm publish
-
-# 3. Push the version commit and the tag.
+# Push the version commit AND the tag. The tag push fires the release job.
 git push --follow-tags
 ```
 
-The package is `publishConfig.access: "public"`, so scoped publishes go
-straight to the public registry.
+Watch progress at `https://github.com/<owner>/<repo>/actions`. The workflow
+fails fast if the tag's version doesn't match `package.json`, so a hand-rolled
+`git tag v1.2.3` without bumping the manifest is caught before anything ships.
 
-To smoke-test the tarball locally before publishing:
+**One-time setup**
+
+1. Get an npm automation token: `npm token create --type=automation`.
+2. Add it to the GitHub repo as a secret named `NPM_TOKEN`
+   (Settings → Secrets and variables → Actions → New repository secret).
+3. The npm scope (`@plugger-open-code` by default) must be one your token
+   can publish to. Change `name` in `package.json` if not.
+
+**Smoke-test a tarball locally before tagging**
 
 ```bash
 npm pack
-cd /tmp && mkdir smoke && cd smoke
-bun add "file:/absolute/path/to/plugger-open-code-claude-marketplace-*.tgz"
-node -e "import('@plugger-open-code/claude-marketplace').then(m => console.log(typeof m.default))"
-node -e "import('@plugger-open-code/claude-marketplace/tui').then(m => console.log(m.id))"
+cd /tmp && mkdir smoke && cd smoke && echo '{"type":"module"}' > package.json
+bun add "file:$(realpath ../path/to/plugger-open-code-claude-marketplace-*.tgz)"
+bun -e "console.log(typeof (await import('@plugger-open-code/claude-marketplace')).default)"
+bun -e "console.log((await import('@plugger-open-code/claude-marketplace/tui')).id)"
 ```
 
 Both imports must resolve and return real values.
