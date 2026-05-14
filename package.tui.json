@@ -15,8 +15,12 @@
   "author": "Lucjan Sulewski",
   "type": "module",
   "main": "./dist-tui/index.js",
+  "$comment_exports": "OpenCode's plugin loader (`packages/opencode/src/plugin/shared.ts:resolvePackageEntrypoint`) resolves a TUI plugin by reading `exports['./tui']` exclusively — kind='tui' does NOT fall back to `main`. Without this key the npm-installed package errors with 'does not expose a tui entrypoint'.",
   "exports": {
     ".": {
+      "default": "./dist-tui/index.js"
+    },
+    "./tui": {
       "default": "./dist-tui/index.js"
     },
     "./package.json": "./package.json"

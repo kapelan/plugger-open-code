@@ -673,9 +673,9 @@ export const tui: TuiPlugin = async (api) => {
   ]);
 };
 
-// OpenCode TUI plugin loader derives `id` from the install spec / package
-// name. Exporting our own `id` confused the loader into reporting "does not
-// expose a tui entrypoint" (the missing-entry branch fires when validation
-// rejects the module shape, not only when `tui` itself is absent). Default
-// export is the module shape per @opencode-ai/plugin's TuiPluginModule type.
-export default { tui } satisfies { tui: TuiPlugin };
+// OpenCode's path-plugin loader requires an exported `id` string — without
+// it the loader throws `Path plugin <url> must export id`. The validator
+// reads `id` as a named export AND off the default-export module shape.
+// Keep both forms exported for safety.
+export const id = '@sulesky/opencode-plugger-tui';
+export default { id, tui } satisfies { id: string; tui: TuiPlugin };
