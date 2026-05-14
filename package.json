@@ -1,6 +1,6 @@
 {
   "name": "@sulesky/opencode-plugger",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Use Claude Code plugins (commands, skills, MCP servers, hooks) inside OpenCode.",
   "keywords": [
     "opencode",
